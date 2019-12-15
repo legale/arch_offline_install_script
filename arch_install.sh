@@ -140,11 +140,12 @@ function cp_system(){
 }
 
 function remove_packages(){
-  log_progress "remove all packages except these with dependencies: 'base group' nano systemd-sysvcompat pacman-contrib openssh linux linux-firmware"
+  log_progress "remove all packages except these with dependencies: \
+  'base group' systemd-sysvcompat netctl nano pacman-contrib openssh linux linux-firmware"
   # pacman-contrib needed because of pactree
   pacman -Sy --noconfirm pacman-contrib
   pacman -Rn --noconfirm $(comm -23 <(pacman -Qq|sort) \
-  <((for i in $(echo "$(pacman -Qqg base) systemd-sysvcompat nano pacman-contrib openssh linux linux-firmware"); do \
+  <((for i in $(echo "$(pacman -Qqg base) systemd-sysvcompat netctl nano pacman-contrib openssh linux linux-firmware"); do \
   pactree -ul $i; done)|sort -u|cut -d ' ' -f 1))
   usermod --shell /bin/bash root
 }
