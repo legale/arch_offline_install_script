@@ -140,13 +140,13 @@ function cp_system(){
 }
 
 function remove_packages(){
-  log_progress "remove all packages except these with dependencies: 'base group' nano shadow systemd-sysvcompat pacman-contrib openssh linux linux-firmware"
+  log_progress "remove all packages except these with dependencies: 'base group' nano systemd-sysvcompat pacman-contrib openssh linux linux-firmware"
   # pacman-contrib needed because of pactree
   pacman -Sy --noconfirm pacman-contrib
   pacman -Rn --noconfirm $(comm -23 <(pacman -Qq|sort) \
-  <((for i in $(echo "$(pacman -Qqg base) systemd-sysvcompat nano shadow pacman-contrib openssh linux linux-firmware"); do \
+  <((for i in $(echo "$(pacman -Qqg base) systemd-sysvcompat nano pacman-contrib openssh linux linux-firmware"); do \
   pactree -ul $i; done)|sort -u|cut -d ' ' -f 1))
-
+  usermod --shell /bin/bash root
 }
 
 function preconfig_system(){
@@ -201,7 +201,7 @@ function make_initcpio(){
 
 function log_progress {
   echo -e "\033[37;1;41m"[$(date +"%d/%m/%Y %k:%M:%S")]:$1 "\033[0m"
-  [ ! -z $FAST ] && read -p "press Enter to continue..."
+  [ -z $FAST ] && read -p "press Enter to continue..."
 }
 
 
