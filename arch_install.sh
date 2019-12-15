@@ -11,7 +11,7 @@ function stage1(){
   make_partitions
   format_partitions
   mount_partitions
-  find_the_fastest_mirror
+  # find_the_fastest_mirror
   cp_system
   generate_fstab
 }
@@ -26,6 +26,7 @@ function stage2(){
   make_initcpio
   echo -e "$PASS\n$PASS" | passwd root
   grub_install
+  remove_packages
 }
 
 make_partitions(){
@@ -136,6 +137,16 @@ function cp_system(){
   cp -ax / /mnt
   log_progress "copy kernel"
   cp -vaT /run/archiso/bootmnt/arch/boot/$(uname -m)/vmlinuz /mnt/boot/vmlinuz-linux
+}
+
+function remove_packages(){
+  log_progress "remove all packages except these with dependencies: 'base group' nano pacman-contrib openssh linux linux-firmware"
+  # pacman-contrib needed because of pactree
+  pacman -Sy --noconfirm pacman-contrib
+  pacman -Rn $(comm -23 <(pacman -Qq|sort) \
+  <((for i in $(echo "$(pacman -Qqg base) nano pacman-contrib openssh linux linux-firmware"); do \
+  pactree -ul $i; done)|sort -u|cut -d ' ' -f 1))
+
 }
 
 function preconfig_system(){
