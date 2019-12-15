@@ -13,13 +13,13 @@ function stage1(){
   mount_partitions
   find_the_fastest_mirror
   cp_system
+  generate_fstab
 }
 
 function stage2(){
   log_progress "Installation stage 2..."
   is_chroot && echo "chroot ok" || exiterr "chroot check failed" 
   preconfig_system
-  generate_fstab
   set_locale
   set_timezone_and_clock
   set_hostname
@@ -105,8 +105,8 @@ function find_the_fastest_mirror {
 
 function generate_fstab {
   log_progress "Generating an fstab..."
-  genfstab -U -p / > /etc/fstab
-  cat /etc/fstab
+  genfstab -L /mnt > /mnt/etc/fstab
+  cat /mnt/etc/fstab
 }
 
 function grub_install(){
