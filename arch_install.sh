@@ -201,13 +201,14 @@ function make_initcpio(){
 
 function log_progress {
   echo -e "\033[37;1;41m"[$(date +"%d/%m/%Y %k:%M:%S")]:$1 "\033[0m"
-  read -p "press Enter to continue..."
+  [ ! -z $FAST ] && read -p "press Enter to continue..."
 }
 
 
 # script body
 log_progress "Arch linux installation script started..."
 
+# read command line arguments
 read_params $*
 
 if [ ! -z $DEBUG ]; then
