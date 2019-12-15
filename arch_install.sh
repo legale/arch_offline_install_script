@@ -19,12 +19,12 @@ function stage1(){
 function stage2(){
   log_progress "Installation stage 2..."
   is_chroot && echo "chroot ok" || exiterr "chroot check failed" 
+  echo -e "$PASS\n$PASS" | passwd root
   preconfig_system
   set_locale
   set_timezone_and_clock
   set_hostname
   make_initcpio
-  echo -e "$PASS\n$PASS" | passwd root
   grub_install
   remove_packages
 }
@@ -140,11 +140,11 @@ function cp_system(){
 }
 
 function remove_packages(){
-  log_progress "remove all packages except these with dependencies: 'base group' nano pacman-contrib openssh linux linux-firmware"
+  log_progress "remove all packages except these with dependencies: 'base group' nano shadow systemd-sysvcompat pacman-contrib openssh linux linux-firmware"
   # pacman-contrib needed because of pactree
   pacman -Sy --noconfirm pacman-contrib
-  pacman -Rn $(comm -23 <(pacman -Qq|sort) \
-  <((for i in $(echo "$(pacman -Qqg base) nano pacman-contrib openssh linux linux-firmware"); do \
+  pacman -Rn --noconfirm $(comm -23 <(pacman -Qq|sort) \
+  <((for i in $(echo "$(pacman -Qqg base) systemd-sysvcompat nano shadow pacman-contrib openssh linux linux-firmware"); do \
   pactree -ul $i; done)|sort -u|cut -d ' ' -f 1))
 
 }
