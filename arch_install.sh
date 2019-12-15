@@ -11,7 +11,7 @@ function stage1(){
   make_partitions
   format_partitions
   mount_partitions
-  find_the_fastest_mirror
+JK;  find_the_fastest_mirror
   cp_system
   generate_fstab
 }
@@ -100,7 +100,7 @@ function mount_partitions {
 function find_the_fastest_mirror {
   log_progress "Find the fastest mirror..."
   pacman -Sy --noconfirm reflector
-  eval $(echo "reflector --verbose --country '${COUNTRY}' -l 200 -p http --sort rate --save /etc/pacman.d/mirrorlist")
+  eval $(echo "reflector --verbose --country '${COUNTRY}' -l 200 --sort rate --save /etc/pacman.d/mirrorlist")
 }
 
 function generate_fstab {
