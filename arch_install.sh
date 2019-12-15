@@ -11,7 +11,6 @@ function stage1(){
   make_partitions
   format_partitions
   mount_partitions
-  # find_the_fastest_mirror
   cp_system
   generate_fstab
 }
@@ -20,6 +19,7 @@ function stage2(){
   log_progress "Installation stage 2..."
   is_chroot && echo "chroot ok" || exiterr "chroot check failed" 
   echo -e "$PASS\n$PASS" | passwd root
+  find_the_fastest_mirror
   preconfig_system
   set_locale
   set_timezone_and_clock
@@ -27,6 +27,7 @@ function stage2(){
   make_initcpio
   grub_install
   remove_packages
+  postconfig_system
 }
 
 make_partitions(){
@@ -101,7 +102,7 @@ function mount_partitions {
 function find_the_fastest_mirror {
   log_progress "Find the fastest mirror..."
   pacman -Sy --noconfirm reflector
-  eval $(echo "reflector --verbose --country '${COUNTRY}' -l 200 --sort rate --save /etc/pacman.d/mirrorlist")
+  reflector --verbose --country '${COUNTRY}' -l 200 --sort rate --save /etc/pacman.d/mirrorlist
 }
 
 function generate_fstab {
@@ -141,16 +142,16 @@ function cp_system(){
 
 function remove_packages(){
   log_progress "remove all packages except these with dependencies: \
-  'base group' systemd-sysvcompat netctl nano pacman-contrib openssh linux linux-firmware"
+  'base group' iputils iproute2 dhcpcd bash-completion systemd-sysvcompat nano pacman-contrib openssh linux linux-firmware"
   # pacman-contrib needed because of pactree
   pacman -Sy --noconfirm pacman-contrib
   pacman -Rn --noconfirm $(comm -23 <(pacman -Qq|sort) \
-  <((for i in $(echo "$(pacman -Qqg base) systemd-sysvcompat netctl nano pacman-contrib openssh linux linux-firmware"); do \
+  <((for i in $(echo "$(pacman -Qqg base) iputils iproute2 dhcpcd bash-completion systemd-sysvcompat nano pacman-contrib openssh linux linux-firmware"); do \
   pactree -ul $i; done)|sort -u|cut -d ' ' -f 1))
-  usermod --shell /bin/bash root
 }
 
 function preconfig_system(){
+  log_progress "preconfig system..."
   log_progress "change journald config to store journal on disk..."
   sed -i 's/Storage=volatile/#Storage=auto/' /etc/systemd/journald.conf
   systemctl disable pacman-init.service choose-mirror.service
@@ -170,6 +171,13 @@ function preconfig_system(){
   log_progress "import archlinux keys..."
   pacman-key --init
   pacman-key --populate archlinux
+}
+
+function postconfig_system(){
+  log_progress "postconfig system..."
+  systemctl enable sshd
+  usermod --shell /bin/bash root
+  pacman -Sy --noconfirm bash-completion
 }
 
 function set_locale {
