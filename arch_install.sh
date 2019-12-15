@@ -11,7 +11,7 @@ function stage1(){
   make_partitions
   format_partitions
   mount_partitions
-JK;  find_the_fastest_mirror
+  find_the_fastest_mirror
   cp_system
   generate_fstab
 }
