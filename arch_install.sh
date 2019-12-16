@@ -55,37 +55,37 @@ function read_params(){
   FAST=${FAST:-0}
   STR+=$FAST
   
-  if [ -z $1 ]; then
+  if [ -z $2 ]; then
     read -p "Enter destination disk [/dev/sda]: " DISK
   fi
   DISK=${DISK:-/dev/sda}
   STR+=" $DISK"
 
-  if [ -z $2 ]; then
+  if [ -z $3 ]; then
     read -p "Enter partition type label (msdos/gpt) [msdos]: " LABEL
   fi
   LABEL=${LABEL:-msdos}
   STR+=" $LABEL"
 
-  if [ -z $3 ]; then
+  if [ -z $4 ]; then
     read -p "Enter country [Russia]: " COUNTRY
   fi
   COUNTRY=${COUNTRY:-Russia}
   STR+=" $COUNTRY"
 
-  if [ -z $4 ]; then
+  if [ -z $5 ]; then
     read -p "Enter city [Moscow]: " CITY
   fi
   CITY=${CITY:-Moscow}
   STR+=" $CITY"
 
-  if [ -z $5 ]; then
+  if [ -z $6 ]; then
     read -p "Enter hostname [archlinux]: " HOSTNAME
   fi
   HOSTNAME=${HOSTNAME:-archlinux}
   STR+=" $HOSTNAME"
 
-  if [ -z $6 ]; then
+  if [ -z $7 ]; then
     read -p "Enter root password [toor]: " PASS
   fi
   PASS=${PASS:-toor}
@@ -217,7 +217,7 @@ function make_initcpio(){
 
 function log_progress {
   echo -e "\033[37;1;41m"[$(date +"%d/%m/%Y %k:%M:%S")]:$1 "\033[0m"
-  [ $FAST == 0 ] && read -p "press Enter to continue..."
+  [[ $FAST == 0 ]] && read -p "press Enter to continue..."
 }
 
 
