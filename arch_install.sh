@@ -53,7 +53,7 @@ function read_params(){
     read -p "Do you want to use fast mode (without confirmation) (y/n) [n]?: " FAST
   fi
   [ "$FAST" != 0 ] && FAST=1
-  echo "$FAST 99"
+
   STR+=$FAST
   
   if [ -z $2 ]; then
