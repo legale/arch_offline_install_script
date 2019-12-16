@@ -47,6 +47,10 @@ make_partitions(){
 }
 
 function read_params(){
+  
+  read -p "Do you want to disable fast mode (without confirmation) (y/n) [n]?: " FAST
+  [ $FAST == "y" ] && FAST=1 || FAST=0
+  
   STR=""
   if [ -z $1 ]; then
     read -p "Enter disk [/dev/sda]: " DISK
@@ -210,7 +214,7 @@ function make_initcpio(){
 
 function log_progress {
   echo -e "\033[37;1;41m"[$(date +"%d/%m/%Y %k:%M:%S")]:$1 "\033[0m"
-  [ -z $FAST ] && read -p "press Enter to continue..."
+  [ $FAST == 0 ] && read -p "press Enter to continue..."
 }
 
 
