@@ -52,7 +52,7 @@ function read_params(){
   if [ -z $1 ]; then
     read -p "Do you want to use fast mode (without confirmation) (y/n) [n]?: " FAST
   fi
-  FAST=${FAST:-0}
+  [ "$FAST" == y ] && FAST=1 || FAST=0
   STR+=$FAST
   
   if [ -z $2 ]; then
@@ -217,7 +217,7 @@ function make_initcpio(){
 
 function log_progress {
   echo -e "\033[37;1;41m"[$(date +"%d/%m/%Y %k:%M:%S")]:$1 "\033[0m"
-  [[ $FAST == 0 ]] && read -p "press Enter to continue..."
+  [ "$FAST" == 0 ] && read -p "press Enter to continue..."
 }
 
 
