@@ -47,16 +47,19 @@ make_partitions(){
 }
 
 function read_params(){
-  
-  read -p "Do you want to disable fast mode (without confirmation) (y/n) [n]?: " FAST
-  [ $FAST == "y" ] && FAST=1 || FAST=0
-  
-  STR=""
+  STR="" 
+
   if [ -z $1 ]; then
-    read -p "Enter disk [/dev/sda]: " DISK
+    read -p "Do you want to use fast mode (without confirmation) (y/n) [n]?: " FAST
+  fi
+  FAST=${FAST:-0}
+  STR+=$FAST
+  
+  if [ -z $1 ]; then
+    read -p "Enter destination disk [/dev/sda]: " DISK
   fi
   DISK=${DISK:-/dev/sda}
-  STR+=$DISK
+  STR+=" $DISK"
 
   if [ -z $2 ]; then
     read -p "Enter partition type label (msdos/gpt) [msdos]: " LABEL
